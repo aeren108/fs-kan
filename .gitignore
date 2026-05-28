@@ -19,3 +19,6 @@ data/
 .DS_Store
 .vscode/
 .idea/
+test_fskan_pykan.py
+model/
+checkpoints/
