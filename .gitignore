@@ -1,0 +1,21 @@
+# Python compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+.venv/
+venv/
+env/
+.env
+
+# Project specific data and weights
+data/
+*.pt
+*.pth
+
+# IDEs and OS files
+.DS_Store
+.vscode/
+.idea/
