@@ -14,7 +14,7 @@ def parse_args():
                         choices=["fskan_std", "fskan_eff", "kan_std"],
                         help="Model architecture to train")
     parser.add_argument("--epochs", type=int, default=100, help="Number of training epochs")
-    parser.add_argument("--batch_size", type=int, default=16, help="Batch size")
+    parser.add_argument("--batch_size", type=int, default=32, help="Batch size")
     parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
     parser.add_argument("--num_points", type=int, default=1024, help="Number of points per object")
     parser.add_argument("--hidden_dim", type=int, default=36, help="Hidden dimension size")

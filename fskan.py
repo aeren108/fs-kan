@@ -13,9 +13,6 @@ class FSKAEquivariantLayer(nn.Module):
     equivalent to:
         Phi(x)_q = Phi_1(x_q) + (sum_p Phi_2(x_p)) - Phi_2(x_q)
 
-    this avoids an explicit loop over points by computing the global sum
-    of Phi_2 once and subtracting each point's own contribution.
-
     args:
         in_features: input feature dimension per point
         out_features: output feature dimension per point
