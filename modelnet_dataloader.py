@@ -1,5 +1,6 @@
 import os
 import torch
+import numpy as np
 import torch_geometric.transforms as T
 from torch_geometric.datasets import ModelNet
 from torch_geometric.loader import DataLoader
@@ -9,7 +10,8 @@ def get_modelnet_loaders(
     batch_size: int = 32,
     num_points: int = 1024,
     use_augmentation: bool = True,
-    train_set_size: int = None
+    train_set_size: int = None,
+    balanced: bool = False
 ):
     """
     args:
@@ -19,6 +21,9 @@ def get_modelnet_loaders(
         use_augmentation (bool): If True, applies random rotation, scaling, translation, 
                                  and jittering to the training dataset.
         train_set_size (int): Optional. Number of samples to use from the training set.
+        balanced (bool): If True and train_set_size is set, sample an equal number of
+                         instances per class. Requires train_set_size to be divisible by
+                         the number of classes.
 
     returns:
         train_loader (DataLoader): DataLoader for training data.
@@ -51,7 +56,29 @@ def get_modelnet_loaders(
     )
     
     if train_set_size is not None and train_set_size < len(train_dataset):
-        indices = torch.randperm(len(train_dataset))[:train_set_size]
+        if balanced:
+            # Collect indices per class, then sample equally from each
+            labels = np.array([train_dataset[i].y.item() for i in range(len(train_dataset))])
+            unique_classes = np.unique(labels)
+            num_classes = len(unique_classes)
+            samples_per_class = train_set_size // num_classes
+            
+            if samples_per_class * num_classes != train_set_size:
+                print(f"WARNING: train_set_size ({train_set_size}) is not evenly divisible "
+                      f"by num_classes ({num_classes}). Using {samples_per_class} samples "
+                      f"per class = {samples_per_class * num_classes} total samples.")
+            
+            selected_indices = []
+            for cls in unique_classes:
+                cls_indices = np.where(labels == cls)[0]
+                perm = torch.randperm(len(cls_indices))[:samples_per_class]
+                selected_indices.append(torch.tensor(cls_indices[perm.numpy()]))
+            
+            indices = torch.cat(selected_indices)
+            print(f"Balanced sampling: {samples_per_class} samples/class × {num_classes} classes = {len(indices)} total")
+        else:
+            indices = torch.randperm(len(train_dataset))[:train_set_size]
+        
         train_dataset = train_dataset[indices]
     
     print(f"Loading/Downloading ModelNet40 test dataset to '{root}'...")
