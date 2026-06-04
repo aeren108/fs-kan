@@ -34,6 +34,8 @@ for pts in "${POINTS_LIST[@]}"; do
     PYTHONUNBUFFERED=1 python train.py \
         --num_points "$pts" \
         --save_dir "$RUN_DIR" \
+        --train-set-size 1000
+        --lr 0.01
         2>&1 | tee "$LOG_FILE"
         
     echo "=========================================================="

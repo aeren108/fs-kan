@@ -8,7 +8,8 @@ def get_modelnet_loaders(
     root: str = "data/ModelNet40",
     batch_size: int = 32,
     num_points: int = 1024,
-    use_augmentation: bool = True
+    use_augmentation: bool = True,
+    train_set_size: int = None
 ):
     """
     args:
@@ -17,6 +18,7 @@ def get_modelnet_loaders(
         num_points (int): Number of points to sample from the mesh for each shape.
         use_augmentation (bool): If True, applies random rotation, scaling, translation, 
                                  and jittering to the training dataset.
+        train_set_size (int): Optional. Number of samples to use from the training set.
 
     returns:
         train_loader (DataLoader): DataLoader for training data.
@@ -47,6 +49,10 @@ def get_modelnet_loaders(
         train=True,
         transform=train_transform
     )
+    
+    if train_set_size is not None and train_set_size < len(train_dataset):
+        indices = torch.randperm(len(train_dataset))[:train_set_size]
+        train_dataset = train_dataset[indices]
     
     print(f"Loading/Downloading ModelNet40 test dataset to '{root}'...")
     test_dataset = ModelNet(

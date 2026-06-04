@@ -19,6 +19,7 @@ def parse_args():
     parser.add_argument("--num_points", type=int, default=1024, help="Number of points per object")
     parser.add_argument("--hidden_dim", type=int, default=36, help="Hidden dimension size")
     parser.add_argument("--num_equiv_layers", type=int, default=2, help="Number of equivariant layers (for FS-KAN)")
+    parser.add_argument("--train-set-size", dest="train_set_size", type=int, default=None, help="Number of samples to use from the train set")
     parser.add_argument("--seed", type=int, default=42, help="Random seed")
     parser.add_argument("--save_dir", type=str, default="checkpoints", help="Directory to save model checkpoints")
     return parser.parse_args()
@@ -45,7 +46,8 @@ def main():
     train_loader, test_loader = get_modelnet_loaders(
         batch_size=args.batch_size,
         num_points=args.num_points,
-        use_augmentation=True
+        use_augmentation=False,
+        train_set_size=args.train_set_size
     )
     
     # Initialize Model
