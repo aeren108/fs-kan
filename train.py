@@ -1,4 +1,5 @@
 import argparse
+import json
 import os
 import torch
 import torch.nn as nn
@@ -88,6 +89,7 @@ def main():
     criterion = nn.CrossEntropyLoss()
     
     best_acc = 0.0
+    best_epoch = 0
     
     # Training Loop
     for epoch in range(1, args.epochs + 1):
@@ -155,11 +157,31 @@ def main():
         
         if test_acc > best_acc:
             best_acc = test_acc
+            best_epoch = epoch
             save_path = os.path.join(args.save_dir, f"best_{args.model}.pth")
             print(f"*** New best accuracy: {best_acc:.2f}%. Saving model to {save_path} ***")
             torch.save(model.state_dict(), save_path)
             
     print(f"\nTraining Complete. Best Test Accuracy: {best_acc:.2f}%")
+    
+    # Write results summary to JSON for easy aggregation
+    results = {
+        "num_points": args.num_points,
+        "train_set_size": args.train_set_size,
+        "model": args.model,
+        "epochs": args.epochs,
+        "lr": args.lr,
+        "best_test_acc": round(best_acc, 4),
+        "best_epoch": best_epoch,
+        "final_train_loss": round(train_loss, 4),
+        "final_train_acc": round(train_acc, 4),
+        "final_test_loss": round(test_loss, 4),
+        "final_test_acc": round(test_acc, 4)
+    }
+    results_path = os.path.join(args.save_dir, "results.json")
+    with open(results_path, "w") as f:
+        json.dump(results, f, indent=2)
+    print(f"Results saved to {results_path}")
 
 if __name__ == "__main__":
     main()
