@@ -23,7 +23,7 @@ pandas==2.3.3
 pillow==12.2.0
 propcache==0.5.2
 psutil==7.2.2
-pykan==0.2.8
+efficient-kan @ git+https://github.com/Blealtan/efficient-kan.git
 pyparsing==3.3.2
 python-dateutil==2.9.0.post0
 PyYAML==6.0.3

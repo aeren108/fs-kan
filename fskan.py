@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from kan import KANLayer, KAN
+from efficient_kan import KANLinear, KAN
 
 
 class FSKAEquivariantLayer(nn.Module):
@@ -30,8 +30,8 @@ class FSKAEquivariantLayer(nn.Module):
         use_batchnorm=True,
     ):
         super().__init__()
-        self.phi_self = KANLayer(in_features, out_features, num=grid_size, k=spline_order)
-        self.phi_others = KANLayer(in_features, out_features, num=grid_size, k=spline_order)
+        self.phi_self = KANLinear(in_features, out_features, grid_size=grid_size, spline_order=spline_order)
+        self.phi_others = KANLinear(in_features, out_features, grid_size=grid_size, spline_order=spline_order)
         self.bn = nn.BatchNorm1d(out_features) if use_batchnorm else None
 
     def forward(self, x):
@@ -48,10 +48,10 @@ class FSKAEquivariantLayer(nn.Module):
         x_flat = x.reshape(B * N, D)
 
         # Phi_1(x_q) for each point
-        self_out = self.phi_self(x_flat)[0]  # KANLayer returns tuple (output, preacts, postacts, postspline)
+        self_out = self.phi_self(x_flat)
 
         # Phi_2(x_p) for each point
-        others_out = self.phi_others(x_flat)[0]
+        others_out = self.phi_others(x_flat)
 
         # reshape back
         self_out = self_out.reshape(B, N, -1)
@@ -97,8 +97,8 @@ class EfficientFSKAEquivariantLayer(nn.Module):
         use_batchnorm=True,
     ):
         super().__init__()
-        self.phi_1 = KANLayer(in_features, out_features, num=grid_size, k=spline_order)
-        self.phi_2 = KANLayer(in_features, out_features, num=grid_size, k=spline_order)
+        self.phi_1 = KANLinear(in_features, out_features, grid_size=grid_size, spline_order=spline_order)
+        self.phi_2 = KANLinear(in_features, out_features, grid_size=grid_size, spline_order=spline_order)
         self.bn = nn.BatchNorm1d(out_features) if use_batchnorm else None
 
     def forward(self, x):
@@ -108,11 +108,11 @@ class EfficientFSKAEquivariantLayer(nn.Module):
 
         # Phi_1 applied point-wise
         x_flat = x.reshape(B * N, D)
-        phi1_out = self.phi_1(x_flat)[0].reshape(B, N, -1)  # (B, N, out_features)
+        phi1_out = self.phi_1(x_flat).reshape(B, N, -1)  # (B, N, out_features)
 
         # aggregate first, then apply Phi_2 once
         x_sum = x.sum(dim=1)  # (B, D)
-        phi2_out = self.phi_2(x_sum)[0]  # (B, out_features)
+        phi2_out = self.phi_2(x_sum)  # (B, out_features)
         phi2_out = phi2_out.unsqueeze(1).expand_as(phi1_out)  # (B, N, out_features)
 
         output = phi1_out + phi2_out
@@ -150,7 +150,7 @@ class FSKAInvariantLayer(nn.Module):
         pool="sum",
     ):
         super().__init__()
-        self.phi = KANLayer(in_features, out_features, num=grid_size, k=spline_order)
+        self.phi = KANLinear(in_features, out_features, grid_size=grid_size, spline_order=spline_order)
         self.pool = pool
 
     def forward(self, x):
@@ -160,7 +160,7 @@ class FSKAInvariantLayer(nn.Module):
 
         # apply shared phi to each point
         x_flat = x.reshape(B * N, D)
-        out = self.phi(x_flat)[0].reshape(B, N, -1)  # (B, N, out_features)
+        out = self.phi(x_flat).reshape(B, N, -1)  # (B, N, out_features)
 
         # pool across points
         if self.pool == "sum":
@@ -287,9 +287,9 @@ class StandardKANClassifier(nn.Module):
 
         layers_dims = [num_points * in_features] + hidden_dims + [num_classes]
         self.kan = KAN(
-            width=layers_dims,
-            grid=grid_size,
-            k=spline_order,
+            layers_hidden=layers_dims,
+            grid_size=grid_size,
+            spline_order=spline_order,
         )
 
     def forward(self, x):

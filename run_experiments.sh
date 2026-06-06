@@ -86,9 +86,12 @@ run_single() {
 
     PYTHONUNBUFFERED=1 python train.py \
         --num_points "$pts" \
+        --epochs 200 \
         --save_dir "$RUN_DIR" \
         --train-set-size "$sz" \
         --lr 0.01 \
+        --model kan_std \
+        --balanced \
         > "$LOG_FILE" 2>&1
 
     local status=$?
