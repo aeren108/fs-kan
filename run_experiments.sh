@@ -90,7 +90,7 @@ run_single() {
         --save_dir "$RUN_DIR" \
         --train-set-size "$sz" \
         --lr 0.01 \
-        --model kan_std \
+        --model fskan_std \
         --balanced \
         > "$LOG_FILE" 2>&1
 

@@ -22,5 +22,3 @@ data/
 test_fskan_pykan.py
 model/
 checkpoints/
-
-experiment_results/

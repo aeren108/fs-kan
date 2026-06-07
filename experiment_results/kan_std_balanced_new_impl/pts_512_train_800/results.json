@@ -1,0 +1,13 @@
+{
+  "num_points": 512,
+  "train_set_size": 800,
+  "model": "kan_std",
+  "epochs": 200,
+  "lr": 0.01,
+  "best_test_acc": 45.624,
+  "best_epoch": 185,
+  "final_train_loss": 1.2513,
+  "final_train_acc": 56.75,
+  "final_test_loss": 2.179,
+  "final_test_acc": 43.9222
+}

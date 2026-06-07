@@ -1,0 +1,13 @@
+{
+  "num_points": 1024,
+  "train_set_size": 1000,
+  "model": "fskan_eff",
+  "epochs": 200,
+  "lr": 0.01,
+  "best_test_acc": 72.0827,
+  "best_epoch": 181,
+  "final_train_loss": 0.3518,
+  "final_train_acc": 88.2,
+  "final_test_loss": 1.3763,
+  "final_test_acc": 71.0697
+}
