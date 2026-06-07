@@ -80,8 +80,18 @@ I used the **ModelNet40** dataset loaded via PyTorch Geometric. Points are unifo
 | **512** | 35.53 | 42.30 | 48.54 | 45.62 | 45.46 |
 | **1024** | 41.77 | 44.53 | 46.96 | 43.52 | 39.79 |
 
-### 3.4 Discussion
+### 3.4 Original Results from the Paper
 
-todo
+The following figure shows the original results reported in the paper for comparison:
 
+![Original results from the paper](experiment_results/original_results.png)
+
+
+### 3.5 Discussion
+
+- The results show that FS-KAN, especially the efficient variant, outperforms the standard KAN baseline.
+
+- With 1024 points and 1000 training samples, **FS-KAN Efficient** achieves the highest overall accuracy, reaching **72.08%** on ModelNet40.
+
+- The results in the paper states that standart FS-KAN should outperform the efficient one. However, in my experiments, the efficient variant outperforms the standard one. I do not know the exact reason for this, but it may be related to the hyperparameters or the dataset.
 
