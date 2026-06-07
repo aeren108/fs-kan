@@ -2,6 +2,8 @@
 
 This repository contains an implementation of FS-KAN (Function-Sharing Kolmogorov–Arnold Networks) applied to 3D point cloud classification on the ModelNet40 dataset.
 
+**Paper:** [https://arxiv.org/abs/2509.24472](https://arxiv.org/abs/2509.24472)
+
 ## 1. Introduction
 
 ### 1.1 Kolmogorov–Arnold Networks (KAN)
